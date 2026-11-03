@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отправка</title>
+    <style>
+        body { font-family: sans-serif; background: #F8FAFC; padding: 20px; margin: 0; }
+        .top { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); max-width: 600px; margin-bottom: 20px; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #4F46E5; font-weight: bold; }
+        button.logout { background: #EF4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #E2E8F0; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        button.submit { background: #4F46E5; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+        .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .alert-success { background: #D1FAE5; color: #065F46; }
+        .alert-error { background: #FEE2E2; color: #991B1B; }
+        .progress { margin-top: 15px; font-size: 14px; color: #64748B; }
+    </style>
+</head>
+<body>
+    <div class="top">
+        <b>VK Scheduler</b>
+        <div>
+            {{ user.username }} 
+            <form method="post" action="/logout" style="display:inline;">
+                <button class="logout">Выйти</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/">Отправка</a>
+        <a href="/communities">Сообщества</a>
+    </div>
+
+    <div class="card">
+        <h2>Отправка партии</h2>
+        
+        {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+        {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+        {% if not communities %}
+            <p style="color: #EF4444;">Сначала добавьте сообщество в разделе «Сообщества».</p>
+        {% else %}
+        <form method="post" action="/send" enctype="multipart/form-data">
+            <label>Выберите сообщество</label>
+            <select name="community_id" required>
+                {% for c in communities %}
+                <option value="{{ c.id }}">{{ c.name }} (ID: {{ c.vk_group_id }})</option>
+                {% endfor %}
+            </select>
+
+            <label>Фотографии (можно выбрать сразу несколько)</label>
+            <input type="file" name="photos" accept="image/*" multiple>
+
+            <label>Тексты постов (разделяйте тремя черточками ---)</label>
+            <textarea name="texts" rows="5" required placeholder="Первый текст...&#10;---&#10;Второй текст...&#10;---&#10;Третий текст..."></textarea>
+
+            <button class="submit" type="submit">Опубликовать посты</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сообщества</title>
+    <style>
+        body { font-family: sans-serif; background: #F8FAFC; padding: 20px; margin: 0; }
+        .top { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); max-width: 500px; margin-bottom: 20px; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #4F46E5; font-weight: bold; }
+        button.logout { background: #EF4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #E2E8F0; border-radius: 8px; box-sizing: border-box; }
+        button.submit { background: #4F46E5; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; }
+        .success { color: #10B981; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="top">
+        <b>VK Scheduler</b>
+        <div>
+            {{ user.username }} 
+            <form method="post" action="/logout" style="display:inline;">
+                <button class="logout">Выйти</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/">Отправка</a>
+        <a href="/communities">Сообщества</a>
+    </div>
+
+    <div class="card">
+        <h2>Добавить сообщество</h2>
+        {% if msg %}<div class="success">{{ msg }}</div>{% endif %}
+        <form method="post" action="/communities">
+            <label>Название (для себя)</label>
+            <input type="text" name="name" required placeholder="Мой магазин">
+            
+            <label>VK Group ID (число)</label>
+            <input type="number" name="vk_group_id" required placeholder="123456789">
+            
+            <label>Access Token (длинная строка)</label>
+            <input type="text" name="access_token" required placeholder="vk1.a....">
+            
+            <button class="submit" type="submit">Сохранить</button>
+        </form>
+    </div>
+
+    {% if communities %}
+    <div class="card">
+        <h2>Ваши сообщества</h2>
+        {% for c in communities %}
+        <div style="border-bottom: 1px solid #E2E8F0; padding: 10px 0;">
+            <b>{{ c.name }}</b> (ID: {{ c.vk_group_id }})<br>
+            <small style="color: #64748B;">Статус токена: {% if c.token_valid %}✅ Активен{% else %}❌ Не проверен{% endif %}</small>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</body>
+</html>
